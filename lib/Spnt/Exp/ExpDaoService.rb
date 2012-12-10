@@ -1,6 +1,7 @@
 require 'Spnt/Exp/Data/ExpInfoResult'
 require 'Spnt/Exp/Data/ExpFoundResult'
 require 'Spnt/Exp/Data/ExpContainerResult'
+require 'Spnt/Exp/Data/ExpRecognitionResult'
 require 'rubygems'
 require 'roo'
 
@@ -14,10 +15,10 @@ module Spnt
 
       ######################
       def read(report_path)
-
         openoffice = Openoffice.new(report_path)
         expFileName =File.basename(report_path, ".ods")
         expContainerResult =Spnt::Exp::Data::ExpContainerResult.new(expFileName)
+        expContainerResult.subtitle = createSubtytle(openoffice);
         expContainerResult.expMap = readInfo(openoffice)
         expContainerResult.sampleMap = readSample(openoffice)
         expContainerResult.foundArr = readFound(openoffice)
@@ -26,19 +27,22 @@ module Spnt
 
       ######################
       # do analysis and classificate results to correct, falseNegative, falsePostive
-      def classificateResult(sampleMap, foundArr)
-
+      def classificateResult(label, sampleMap, foundArr)
+        expRecognitionResult = Spnt::Exp::Data::ExpRecognitionResult.new()
         #missed = sampleArr - foundArr
         # filter that was found and transform to array
-        falseNegative = sampleMap.select{|ekey, sample|
-          nil == foundArr.detect{|found| sample.ekey == found.ekey}
+        expRecognitionResult.falseNegative = sampleMap.select{|ekey, sample|
+          if(matchLabels?( label, sample.label))
+            nil == foundArr.detect{|found| sample.ekey == found.ekey}
+          end
         }.collect { |k, v| v }
 
-        p "falseNegative: " +  falseNegative.collect{|v| "s %i  %s" % [v.id, v.ekey]}.join(", ")
+        puts "[classificateResult] %s falseNegative:  %i" % [label, expRecognitionResult.falseNegative.length]
+        #puts "falseNegative: " +  falseNegative.collect{|v| "s %i  %s" % [v.id, v.ekey]}.join(", ")
 
-        falsePostive = foundArr.select{|found|
+        expRecognitionResult.falsePostive = foundArr.select{|found|
           sample = sampleMap[found.ekey]
-          if(sample != nil)
+          if(sample != nil && matchLabels?( label, found.label) )
             absStartDelta = (sample.shouldStart - found.foundStart).abs
             absEndDelta = (sample.shouldEnd - found.foundEnd).abs
             sample.ekey == found.ekey && (absStartDelta > @@thresholdStart || absEndDelta > @@thresholdEnd)
@@ -46,14 +50,15 @@ module Spnt
             false
           end
         }
-        puts "falsePostive: " + falsePostive.collect{|v|
-          absStartDelta = (v.shouldStart - v.foundStart).abs
-          absEndDelta = (v.shouldEnd - v.foundEnd).abs
-          "%i %s D[%i; %i]" % [v.id, v.ekey, absStartDelta, absEndDelta]}.join("\r\n")
+        puts "[classificateResult] %s falsePostive:  %i" % [label,expRecognitionResult.falsePostive.length]
+        #        puts "[classificateResult] falsePostive: " + expRecognitionResult.falsePostive.collect{|v|
+        #          absStartDelta = (v.shouldStart - v.foundStart).abs
+        #          absEndDelta = (v.shouldEnd - v.foundEnd).abs
+        #          "%i %s D[%i; %i]" % [v.id, v.ekey, absStartDelta, absEndDelta]}.join("\r\n")
 
-        correct = foundArr.select{|found|
+        expRecognitionResult.correct = foundArr.select{|found|
           sample = sampleMap[found.ekey]
-          if(sample != nil)
+          if(sample != nil && matchLabels?( label, found.label))
             absStartDelta = (sample.shouldStart - found.foundStart).abs
             absEndDelta = (sample.shouldEnd - found.foundEnd).abs
             sample.ekey == found.ekey && absStartDelta <= @@thresholdStart && absEndDelta <= @@thresholdEnd
@@ -61,9 +66,26 @@ module Spnt
             false
           end
         }
-        p "correct: " + correct.collect{|v| "%i %s" % [v.id, v.ekey]}.join(", ")
+        #p "correct: " + expRecognitionResult.correct.collect{|v| "%i %s" % [v.id, v.ekey]}.join(", ")
+        puts "[classificateResult] %s correct:  %i" % [label,expRecognitionResult.correct.length]
 
-        [falseNegative, falsePostive, correct]
+        expRecognitionResult
+      end
+
+      ######################
+      # do analysis and classificate results to correct, falseNegative, falsePostive
+      def classificateResultByLabel(sampleMap, foundArr)
+        labelArr = []
+        sampleMap.each{|key,value|
+          labelArr << value.label
+        }
+        labelArr = labelArr.uniq()
+        expRecognitionResultMap = {}
+        labelArr.each{|label|
+          puts "[classificateResultByLabel] label: %s" % label
+          expRecognitionResultMap[label]= classificateResult(label,sampleMap,foundArr);
+        }
+        expRecognitionResultMap
       end
 
       private
@@ -117,8 +139,7 @@ module Spnt
       def readSample(openoffice)
         openoffice.default_sheet = openoffice.sheets[2]
         puts openoffice.default_sheet.to_s
-        sampleMap = {}
-
+        sampleMapByKey = {}
         (2..1000).each { |i|
           ekey = openoffice.cell(i, 'B').to_s()
           break if ekey.empty?
@@ -128,9 +149,21 @@ module Spnt
           sampleEelement.label = openoffice.cell(i, 'D').to_s()
           sampleEelement.shouldStart = openoffice.cell(i, 'E').to_i()
           sampleEelement.shouldEnd = openoffice.cell(i, 'F').to_i()
-          sampleMap[ekey] = sampleEelement
+          sampleMapByKey[ekey] = sampleEelement
         }
-        sampleMap
+        sampleMapByKey
+      end
+
+      def matchLabels?( label, foundLabel)
+        #puts "[matchLabels]#{label} #{foundLabel} #{label == nil ||  label == foundLabel}"
+        label == nil ||  label == foundLabel
+      end
+
+      def createSubtytle(openoffice)
+        openoffice.default_sheet = openoffice.sheets[0]
+        puts openoffice.default_sheet.to_s
+        subtytle = openoffice.cell(1, 'A').to_s()
+        subtytle
       end
 
     end

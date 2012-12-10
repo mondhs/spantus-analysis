@@ -2,7 +2,7 @@ module Spnt
   module Exp
     module Data
       class ExpContainerResult
-        attr_accessor :expFileName, :expMap, :foundArr, :sampleMap
+        attr_accessor :expFileName, :subtitle, :expMap, :foundArr, :sampleMap
         def initialize(expFileName)
           @expFileName = expFileName
           @expMap = {}
