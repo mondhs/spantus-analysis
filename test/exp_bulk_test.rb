@@ -1,4 +1,4 @@
-$: << File.dirname(__FILE__) + '/../lib/*'
+$: << File.dirname(__FILE__) + '/../lib/'
 require 'test/unit'
 require 'Spnt/Exp/ExpDaoService'
 require 'Spnt/Exp/ExpDrawService'
@@ -13,21 +13,25 @@ class ExpTest < Test::Unit::TestCase
   end
 
   def test_bulk
+    open("./target/recognition.csv", 'w') { |f|
+      f << "Exp;Segment;False Negative;False Positive;Correct\n"
+    }
     fileArr = [
-      "/home/as/Documents/studijos/experiments/wopitch/result-1027-word-scroll.ods",
-      "/home/as/Documents/studijos/experiments/wopitch/result-1027-word-qsegment.ods",
-      "/home/as/Documents/studijos/experiments/wopitch/result-1104-syl-qsegment.ods",
-      "/home/as/Documents/studijos/experiments/wopitch/result-1104-syl-scroll.ods",
+      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-word.ods",
+      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-word.ods",
 
-      "/home/as/Documents/studijos/experiments/wpitch/result-1106-syl-qsegment.ods",
-      "/home/as/Documents/studijos/experiments/wpitch/result-1106-syl-scroll.ods",
-      "/home/as/Documents/studijos/experiments/wpitch/result-1106-word-qsegment.ods",
-      "/home/as/Documents/studijos/experiments/wpitch/result-1106-word-scroll.ods",
+      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-word.ods",
+      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-word.ods",
+
+      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-word.ods",
+      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-word.ods",
       
-#      "/home/as/Documents/studijos/experiments/dynlen/result-1113-syl-qsegment.ods",
-#      "/home/as/Documents/studijos/experiments/dynlen/result-1113-syl-scroll.ods"
-#      "/home/as/Documents/studijos/experiments/dynlen/result-1113-word-qsegment.ods"
-#      "/home/as/Documents/studijos/experiments/dynlen/result-1113-word-scroll.ods"
     ]
     expContainerResultArr = []
     expRecognitionResultMapArr = []
@@ -44,8 +48,9 @@ class ExpTest < Test::Unit::TestCase
       audioLengthTimeArr= expContainerResult.expMap().collect { |k, v| v.audioLength }
       ratio = processedTimeArr.sum.to_f/audioLengthTimeArr.sum.to_f
       calculationRatioMap[expContainerResult] = ratio
-      @expDrawService.drawProcessingRatio(calculationRatioMap);
     }
+    calculationRatioMap.sort_by {|key, value| value}
+    @expDrawService.drawProcessingRatio(calculationRatioMap);
     
   end
 

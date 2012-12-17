@@ -27,7 +27,8 @@ module Spnt
 
       ######################
       # do analysis and classificate results to correct, falseNegative, falsePostive
-      def classificateResult(label, sampleMap, foundArr)
+      def classificateResult(label, sampleMap, foundAllArr)
+        foundArr = foundAllArr.select{|found|  found.label == label}
         expRecognitionResult = Spnt::Exp::Data::ExpRecognitionResult.new()
         #missed = sampleArr - foundArr
         # filter that was found and transform to array
@@ -36,39 +37,35 @@ module Spnt
             nil == foundArr.detect{|found| sample.ekey == found.ekey}
           end
         }.collect { |k, v| v }
+         
 
-        puts "[classificateResult] %s falseNegative:  %i" % [label, expRecognitionResult.falseNegative.length]
+
+        #puts "[classificateResult] %s falseNegative:  %i" % [label, expRecognitionResult.falseNegative.length]
         #puts "falseNegative: " +  falseNegative.collect{|v| "s %i  %s" % [v.id, v.ekey]}.join(", ")
 
-        expRecognitionResult.falsePostive = foundArr.select{|found|
-          sample = sampleMap[found.ekey]
-          if(sample != nil && matchLabels?( label, found.label) )
-            absStartDelta = (sample.shouldStart - found.foundStart).abs
-            absEndDelta = (sample.shouldEnd - found.foundEnd).abs
-            sample.ekey == found.ekey && (absStartDelta > @@thresholdStart || absEndDelta > @@thresholdEnd)
-          else
-            false
-          end
-        }
-        puts "[classificateResult] %s falsePostive:  %i" % [label,expRecognitionResult.falsePostive.length]
-        #        puts "[classificateResult] falsePostive: " + expRecognitionResult.falsePostive.collect{|v|
-        #          absStartDelta = (v.shouldStart - v.foundStart).abs
-        #          absEndDelta = (v.shouldEnd - v.foundEnd).abs
-        #          "%i %s D[%i; %i]" % [v.id, v.ekey, absStartDelta, absEndDelta]}.join("\r\n")
 
+        foundDuplicates = {}
         expRecognitionResult.correct = foundArr.select{|found|
           sample = sampleMap[found.ekey]
           if(sample != nil && matchLabels?( label, found.label))
             absStartDelta = (sample.shouldStart - found.foundStart).abs
             absEndDelta = (sample.shouldEnd - found.foundEnd).abs
-            sample.ekey == found.ekey && absStartDelta <= @@thresholdStart && absEndDelta <= @@thresholdEnd
+            matched = sample.ekey == found.ekey && absStartDelta <= @@thresholdStart && absEndDelta <= @@thresholdEnd
+            if matched == true
+              foundDuplicateElement = foundDuplicates[found.ekey]
+              if foundDuplicateElement == nil
+                foundDuplicateElement = []
+                foundDuplicates[found.ekey] = foundDuplicateElement
+              end
+              foundDuplicateElement << found
+              #puts "foundDuplicates[#{sample.ekey}] #{foundDuplicates[sample.ekey].length} #{matched && foundDuplicates[sample.ekey].length == 1}"
+            end
+            matched && foundDuplicates[sample.ekey].length == 1
           else
             false
           end
         }
-        #p "correct: " + expRecognitionResult.correct.collect{|v| "%i %s" % [v.id, v.ekey]}.join(", ")
-        puts "[classificateResult] %s correct:  %i" % [label,expRecognitionResult.correct.length]
-
+        expRecognitionResult.falsePostive = foundArr.select{|found| !expRecognitionResult.correct.include?(found) }
         expRecognitionResult
       end
 

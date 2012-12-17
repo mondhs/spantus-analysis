@@ -11,6 +11,12 @@ module Spnt
     def initialize(aReportPath)
       @report_path = aReportPath#"./data/test.ods"
     end
+    
+    def is_numeric(object)
+		true if Float(object) rescue false
+	end
+
+
 
     def generate(exp_name)
       tableArr = %w{WORDSPOTINFOEXP WORDSPOTSAMPLEEXP WORDSPOTFOUNDEXP}
@@ -52,7 +58,13 @@ module Spnt
             while (rsS.next) do
               row {
                 columnArr.each{ |column|
-                  cell rsS.getObject(column)
+				  obj = rsS.getObject(column)
+				  if obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil
+					cell obj				
+				  else
+					cell obj.to_f, :type => :float
+				  end
+                  
                 }
               }
             end

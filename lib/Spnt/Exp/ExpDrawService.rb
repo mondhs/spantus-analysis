@@ -23,15 +23,16 @@ module Spnt
         drawProcessingTotal(expContainerResult.expFileName, expContainerResult.subtitle, processedTimeArr.sum/1000, audioLengthTimeArr.sum/1000)
         #drawProcessingAverage(expContainerResult.expFileName, processedTimeArr, audioLengthTimeArr)
       end
-      
+
       def drawProcessingRatio(calculationRatioMap)
         data_processed = []
         fields = [];
         calculationRatioMap.each{|expContainerResult, ratio|
           fields << expContainerResult.subtitle
           data_processed << ratio
+          puts "#{expContainerResult.subtitle};#{ratio}"
         }
-          
+
         graph = SVG::Graph::Bar.new(
         :height => @@height,
         :width => @@width,
@@ -86,24 +87,27 @@ module Spnt
         :fields => fields,
         :errorBars =>errorBars
         )
+        open("./target/recognition.csv", 'a') { |f|
+          expRecognitionResultMap.each{|key, expRecognitionResult|
+            falseNegative = expRecognitionResult.falseNegative
+            falsePostive = expRecognitionResult.falsePostive
+            correct = expRecognitionResult.correct
 
-        expRecognitionResultMap.each{|key, expRecognitionResult|
-          falseNegative = expRecognitionResult.falseNegative
-          falsePostive = expRecognitionResult.falsePostive
-          correct = expRecognitionResult.correct
+            totalNum = 400 
+            #(falseNegative.length  +
+            #falsePostive.length +
+            #correct.length).to_f
+            data_processed = [100*(falseNegative.length.to_f/totalNum),
+              100*(falsePostive.length.to_f/totalNum),
+              100*(correct.length.to_f/totalNum)]
+            graph.add_data(
+            :data => data_processed,
+            :title => "#{key}"
+            )
+            f << "%s;%s;%s;%s\n" %[expFileName, key, data_processed.join(";"), errorBars.join(";")]
+          }
 
-          totalNum = (falseNegative.length  +
-          falsePostive.length +
-          correct.length).to_f
-          data_processed = [100*(falseNegative.length.to_f/totalNum),
-            100*(falsePostive.length.to_f/totalNum),
-            100*(correct.length.to_f/totalNum)]
-          graph.add_data(
-          :data => data_processed,
-          :title => "#{key}"
-          )
         }
-
         File.open("./target/%s-recognition.svg" % expFileName , 'w') {|f|
           f << graph.burn
         }

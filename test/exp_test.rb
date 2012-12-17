@@ -15,11 +15,15 @@ class ExpTest < Test::Unit::TestCase
  
 
   def test_exp
-   expRecognitionResultMap,expContainerResult = @expFacade.readAndDraw(@report_path)
+    p "test_exp++++++++++++"
+    expRecognitionResultMap,expContainerResult = @expFacade.readAndDraw(@report_path)
+    
     assert_equal(45, expContainerResult.expMap.length)
+    p "test_exp----------------"
   end
 
   def test_process
+    p "test_process++++++++++++"
     foundArr = [];
     foundArr << createExpFoundResult("correct_1", 20, 110, "label1")
     foundArr << createExpFoundResult("duplicated_1",  200, 300, "label1")
@@ -52,10 +56,11 @@ class ExpTest < Test::Unit::TestCase
     assert_equal(2,expRecognitionResultMap["label2"].falseNegative.length,"falseNegative")
     assert_equal(2,expRecognitionResultMap["label2"].falsePostive.length,"falseNegative")
     assert_equal(4,expRecognitionResultMap["label2"].correct.length,"correct")
-
+    p "test_process-------------------"
   end
 
   def test_extract
+    p "test_process++++++++++++++++++++"
     foundArr = [];
     foundArr << createExpFoundResult("correct_1", 20, 110, "label")
     foundArr << createExpFoundResult("duplicated_1",  200, 300, "label")
@@ -68,11 +73,13 @@ class ExpTest < Test::Unit::TestCase
 
     sampleMap = Hash[sampleArr.map { |p| [p.ekey, p] }]
 
-    expRecognitionResult = @expDaoService.classificateResult(nil, sampleMap,foundArr)
+    expRecognitionResult = @expDaoService.classificateResult("label", sampleMap,foundArr)
 
+    assert_equal(2,expRecognitionResult.correct.length,"correct")
     assert_equal(1,expRecognitionResult.falseNegative.length,"falseNegative")
     assert_equal(1,expRecognitionResult.falsePostive.length,"falseNegative")
-    assert_equal(2,expRecognitionResult.correct.length,"correct")
+
+    p "test_process----------------"
   end
 
   private
