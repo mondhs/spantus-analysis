@@ -9,7 +9,8 @@ class ExpTest < Test::Unit::TestCase
     @expDaoService = Spnt::Exp::ExpDaoService.new()
     @expDrawService = Spnt::Exp::ExpDrawService.new()
     @expFacade  = Spnt::Exp::ExpFacade.new()
-    @report_path = "./data/result-1106-word-qsegment.ods"
+    #@report_path = "./data/result-1106-word-qsegment.ods"
+    @report_path = "./data/wpitch-qsegment-syl.ods"
   end
 
  
@@ -22,7 +23,7 @@ class ExpTest < Test::Unit::TestCase
     p "test_exp----------------"
   end
 
-  def test_process
+  def _test_process
     p "test_process++++++++++++"
     foundArr = [];
     foundArr << createExpFoundResult("correct_1", 20, 110, "label1")
@@ -59,7 +60,7 @@ class ExpTest < Test::Unit::TestCase
     p "test_process-------------------"
   end
 
-  def test_extract
+  def _test_extract
     p "test_process++++++++++++++++++++"
     foundArr = [];
     foundArr << createExpFoundResult("correct_1", 20, 110, "label")

@@ -95,7 +95,7 @@ module Spnt
         puts openoffice.default_sheet.to_s
         expMap = {}
 
-        (2..1000).each { |i|
+        (2..10000).each { |i|
           filename = openoffice.cell(i, 'B').to_s()
           break if filename.empty?
           expMap[filename]=Spnt::Exp::Data::ExpInfoResult.new(filename)
@@ -113,7 +113,7 @@ module Spnt
         puts openoffice.default_sheet.to_s
         foundArr = []
 
-        (2..1000).each { |i|
+        (2..10000).each { |i|
           ekey = openoffice.cell(i, 'B').to_s()
           break if ekey.empty?
           foundEelement =Spnt::Exp::Data::ExpFoundResult.new(ekey)
@@ -137,7 +137,7 @@ module Spnt
         openoffice.default_sheet = openoffice.sheets[2]
         puts openoffice.default_sheet.to_s
         sampleMapByKey = {}
-        (2..1000).each { |i|
+        (2..10000).each { |i|
           ekey = openoffice.cell(i, 'B').to_s()
           break if ekey.empty?
           sampleEelement =Spnt::Exp::Data::ExpFoundResult.new(ekey)

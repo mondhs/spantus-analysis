@@ -93,7 +93,7 @@ module Spnt
             falsePostive = expRecognitionResult.falsePostive
             correct = expRecognitionResult.correct
 
-            totalNum = 400 
+            totalNum = 800 
             #(falseNegative.length  +
             #falsePostive.length +
             #correct.length).to_f
