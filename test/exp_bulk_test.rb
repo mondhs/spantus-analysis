@@ -18,19 +18,19 @@ class ExpTest < Test::Unit::TestCase
     }
     fileArr = [
       "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-syl.ods",
-      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-word.ods",
+#      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-word.ods",
       "/home/as/Documents/studijos/experiments/400/dynlen-scroll-syl.ods",
-      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-word.ods",
+#      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-word.ods",
 
       "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-syl.ods",
-      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-word.ods",
+#      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-word.ods",
       "/home/as/Documents/studijos/experiments/400/wopitch-scroll-syl.ods",
-      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-word.ods",
+#      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-word.ods",
 
       "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-syl.ods",
-      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-word.ods",
+#      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-word.ods",
       "/home/as/Documents/studijos/experiments/400/wpitch-scroll-syl.ods",
-      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-word.ods",
+#      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-word.ods",
       
     ]
     expContainerResultArr = []
