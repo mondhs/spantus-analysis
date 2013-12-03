@@ -17,25 +17,35 @@ class ExpTest < Test::Unit::TestCase
       f << "Exp;Segment;False Negative;False Positive;Correct\n"
     }
     fileArr = [
-      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-syl.ods",
+      "/home/as/Documents/studijos/experiments/400/dynlen-sphinx-word.ods",
+      "/home/as/Documents/studijos/experiments/400/wopitch-sphinx-word.ods",
+     "/home/as/Documents/studijos/experiments/400/wpitch-sphinx-word.ods",
+
+#      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-syl.ods",
 #      "/home/as/Documents/studijos/experiments/400/dynlen-qsegment-word.ods",
-      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-syl.ods",
+#      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-syl.ods",
 #      "/home/as/Documents/studijos/experiments/400/dynlen-scroll-word.ods",
 
-      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-syl.ods",
+
+
+#      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-syl.ods",
 #      "/home/as/Documents/studijos/experiments/400/wopitch-qsegment-word.ods",
-      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-syl.ods",
+#      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-syl.ods",
 #      "/home/as/Documents/studijos/experiments/400/wopitch-scroll-word.ods",
 
-      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-syl.ods",
+ 
+#      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-syl.ods",
 #      "/home/as/Documents/studijos/experiments/400/wpitch-qsegment-word.ods",
-      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-syl.ods",
+#      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-syl.ods",
 #      "/home/as/Documents/studijos/experiments/400/wpitch-scroll-word.ods",
+#      "/home/as/Documents/studijos/experiments/natural/natural-qsegment-syl.ods",
+#      "/home/as/Documents/studijos/experiments/natural/natural-scroll-syl.ods",
       
     ]
     expContainerResultArr = []
     expRecognitionResultMapArr = []
     fileArr.each{|file|
+      puts "#{file}"
       expRecognitionResultMap,expContainerResult = @expFacade.readAndDraw(file)
       expRecognitionResultMapArr << expRecognitionResultMap
       expContainerResultArr << expContainerResult

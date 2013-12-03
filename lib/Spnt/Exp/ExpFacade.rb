@@ -10,6 +10,7 @@ module Spnt
       end
 
       def readAndDraw(report_path)
+        puts "[readAndDraw] #{report_path}"
         expContainerResult = @expDaoService.read(report_path)
         #@expDrawService.drawTotals(expContainerResult)
         expRecognitionResultMap = @expDaoService.classificateResultByLabel(expContainerResult.sampleMap,expContainerResult.foundArr)

@@ -1,4 +1,4 @@
-#jruby generate.rb wopitch qsegment word
+#jruby generate-syn.rb wopitch qsegment word
 
 require File.dirname(__FILE__) + '/lib/Spnt/JdbcReport.rb'
 
@@ -9,6 +9,7 @@ LabelMap["dynlen"] = "With Pitch Variable Length"
 
 LabelMap["qsegment"] = "Qsegment"
 LabelMap["scroll"] = "Scroll"
+LabelMap["sphinx"] = "Sphinx"
 
 LabelMap["word"] = "Word"
 LabelMap["syl"] = "Syllable"

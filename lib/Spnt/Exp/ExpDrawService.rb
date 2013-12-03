@@ -30,7 +30,7 @@ module Spnt
         calculationRatioMap.each{|expContainerResult, ratio|
           fields << expContainerResult.subtitle
           data_processed << ratio
-          puts "#{expContainerResult.subtitle};#{ratio}"
+          puts "[drawProcessingRatio]#{expContainerResult.subtitle};#{ratio}"
         }
 
         graph = SVG::Graph::Bar.new(
@@ -93,7 +93,7 @@ module Spnt
             falsePostive = expRecognitionResult.falsePostive
             correct = expRecognitionResult.correct
 
-            totalNum = 800 
+            totalNum = 100 
             #(falseNegative.length  +
             #falsePostive.length +
             #correct.length).to_f

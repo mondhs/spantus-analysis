@@ -15,7 +15,7 @@ module Spnt
 
       ######################
       def read(report_path)
-        openoffice = Openoffice.new(report_path)
+        openoffice = Roo::OpenOffice.new(report_path)
         expFileName =File.basename(report_path, ".ods")
         expContainerResult =Spnt::Exp::Data::ExpContainerResult.new(expFileName)
         expContainerResult.subtitle = createSubtytle(openoffice);
@@ -40,8 +40,8 @@ module Spnt
          
 
 
-        #puts "[classificateResult] %s falseNegative:  %i" % [label, expRecognitionResult.falseNegative.length]
-        #puts "falseNegative: " +  falseNegative.collect{|v| "s %i  %s" % [v.id, v.ekey]}.join(", ")
+        puts "[classificateResult] %s falseNegative:  %i" % [label, expRecognitionResult.falseNegative.length]
+        puts "falseNegative: " +  expRecognitionResult.falseNegative.collect{|v| "s %i  %s" % [v.id, v.ekey]}.join(", ")
 
 
         foundDuplicates = {}
@@ -58,7 +58,7 @@ module Spnt
                 foundDuplicates[found.ekey] = foundDuplicateElement
               end
               foundDuplicateElement << found
-              #puts "foundDuplicates[#{sample.ekey}] #{foundDuplicates[sample.ekey].length} #{matched && foundDuplicates[sample.ekey].length == 1}"
+              puts "foundDuplicates[#{sample.ekey}] #{foundDuplicates[sample.ekey].length} #{matched && foundDuplicates[sample.ekey].length == 1}"
             end
             matched && foundDuplicates[sample.ekey].length == 1
           else
@@ -92,7 +92,7 @@ module Spnt
       #   openoffice - spread sheet object
       def readInfo(openoffice)
         openoffice.default_sheet = openoffice.sheets[1]
-        puts openoffice.default_sheet.to_s
+        puts "[readInfo]#{openoffice.default_sheet.to_s}"
         expMap = {}
 
         (2..10000).each { |i|
@@ -110,7 +110,7 @@ module Spnt
       #   openoffice - spread sheet object
       def readFound(openoffice)
         openoffice.default_sheet = openoffice.sheets[3]
-        puts openoffice.default_sheet.to_s
+        puts "[readFound]#{openoffice.default_sheet.to_s}"
         foundArr = []
 
         (2..10000).each { |i|
