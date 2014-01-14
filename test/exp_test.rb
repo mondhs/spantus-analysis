@@ -9,26 +9,35 @@ class ExpTest < Test::Unit::TestCase
     @expDaoService = Spnt::Exp::ExpDaoService.new()
     @expDrawService = Spnt::Exp::ExpDrawService.new()
     @expFacade  = Spnt::Exp::ExpFacade.new()
-    #@report_path = "./data/result-1106-word-qsegment.ods"
-    @report_path = "./data/wpitch-qsegment-syl.ods"
+    puts Dir.pwd
+    @report_path = "./data/result-1106-word-qsegment.ods"
+    #@report_path = "./data/wpitch-qsegment-syl.ods"
   end
 
  
 
-  def test_exp
+  def test_experiment_integration
     p "test_exp++++++++++++"
     expRecognitionResultMap,expContainerResult = @expFacade.readAndDraw(@report_path)
     
-    assert_equal(45, expContainerResult.expMap.length)
+    expContainerResult.expMap
+    
+    puts "falseNegative: " +  expContainerResult.expMap.collect{|k, v| " %s => %s" % [k.to_s, v.to_s]}.join("; ")
+
+    assert_equal(2, expContainerResult.expMap.length,"Sample length")
+    
+    assert_equal(1, expRecognitionResultMap["lietuvoos"].falseNegative.length,"falseNegative")
+    assert_equal(1, expRecognitionResultMap["lietuvoos"].falsePostive.length,"falsePostive")
+    assert_equal(2, expRecognitionResultMap["lietuvoos"].correct.length,"correct")
     p "test_exp----------------"
   end
 
-  def _test_process
+  def test_classificateResultByLabel
     p "test_process++++++++++++"
     foundArr = [];
     foundArr << createExpFoundResult("correct_1", 20, 110, "label1")
     foundArr << createExpFoundResult("duplicated_1",  200, 300, "label1")
-    foundArr << createExpFoundResult("duplicated_1",  250, 290, "label1")
+    foundArr << createExpFoundResult("duplicated_1",  0, 0, "label1")
     foundArr << createExpFoundResult("correct_2", 120, 210, "label2")
     foundArr << createExpFoundResult("duplicated_2",  300, 400, "label2")
     foundArr << createExpFoundResult("duplicated_2",  350, 390, "label2")
@@ -52,15 +61,15 @@ class ExpTest < Test::Unit::TestCase
     expRecognitionResultMap = @expDaoService.classificateResultByLabel(sampleMap,foundArr)
     assert_equal(2,expRecognitionResultMap.length,"labels")
     assert_equal(1,expRecognitionResultMap["label1"].falseNegative.length,"falseNegative")
-    assert_equal(1,expRecognitionResultMap["label1"].falsePostive.length,"falseNegative")
+    assert_equal(1,expRecognitionResultMap["label1"].falsePostive.length,"falsePostive")
     assert_equal(2,expRecognitionResultMap["label1"].correct.length,"correct")
     assert_equal(2,expRecognitionResultMap["label2"].falseNegative.length,"falseNegative")
-    assert_equal(2,expRecognitionResultMap["label2"].falsePostive.length,"falseNegative")
+    assert_equal(2,expRecognitionResultMap["label2"].falsePostive.length,"falsePostive")
     assert_equal(4,expRecognitionResultMap["label2"].correct.length,"correct")
     p "test_process-------------------"
   end
 
-  def _test_extract
+  def test_classificateResult
     p "test_process++++++++++++++++++++"
     foundArr = [];
     foundArr << createExpFoundResult("correct_1", 20, 110, "label")

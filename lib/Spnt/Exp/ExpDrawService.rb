@@ -104,6 +104,7 @@ module Spnt
             :data => data_processed,
             :title => "#{key}"
             )
+            
             f << "%s;%s;%s;%s\n" %[expFileName, key, data_processed.join(";"), errorBars.join(";")]
           }
 

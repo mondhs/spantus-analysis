@@ -2,7 +2,7 @@ module Spnt
   module Exp
     class ExpStatService
       #http://www.stat.rice.edu/~dobelman/textfiles/DistributionsHandbook.pdf
-      @@T_DISTRIBUTION_975 = { 1  => 12.71,
+      @@T_DISTRIBUTION_975 = {
         1=>   12.71,
         2=> 4.303,
         3=>3.182,

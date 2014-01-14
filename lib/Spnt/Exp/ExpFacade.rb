@@ -14,6 +14,7 @@ module Spnt
         expContainerResult = @expDaoService.read(report_path)
         #@expDrawService.drawTotals(expContainerResult)
         expRecognitionResultMap = @expDaoService.classificateResultByLabel(expContainerResult.sampleMap,expContainerResult.foundArr)
+        puts "[readAndDraw] #{expContainerResult.sampleMap.length}"
         @expDrawService.drawRecognition(expContainerResult.expFileName, expContainerResult.subtitle ,expRecognitionResultMap)
         [expRecognitionResultMap,expContainerResult]
       end
